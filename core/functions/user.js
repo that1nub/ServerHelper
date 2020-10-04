@@ -34,32 +34,38 @@ global.findUser = function(needle, guild) {
 	if (needle != "") {
 		let user = bot.users.resolve(needle); // They entered a valid ID
 		if (user) { // User is valid
+			let push = true;
 			let tbl = {user: user};
 			if (guild instanceof Discord.Guild) {
 				let member = guild.members.resolve(user.id);
 				tbl.member = member;
+				if (!tbl.member) push = false;
 			}
-			found.push(tbl); // Push the table to the output
+			if (push) found.push(tbl); // Push the table to the output
 		} else if (needle.match(mentionPatt)) { // @mention pattern
-			let id = needle.match(/[0-9]+/);
+			let id = needle.match(/[0-9]+/)[0];
 			user = bot.users.resolve(id);
 			if (user) {
+				let push = true;
 				let tbl = {user: user};
 				if (guild instanceof Discord.Guild) {
 					let member = guild.members.resolve(user.id);
 					tbl.member = member;
+					if (!tbl.member) push = false;
 				}
-				found.push(tbl); // Push the table to the output
+				if (push) found.push(tbl); // Push the table to the output
 			}
 		} else { // Not an id or mention, now we search by name
 			bot.users.cache.forEach((user, id, map) => {
 				if (user.tag.toLowerCase().includes(needle)) { // Needle is found in name
+					let push = true;
 					let tbl = {user: user};
 					if (guild instanceof Discord.Guild) {
 						let member = guild.members.resolve(id);
 						tbl.member = member;
+						if (!tbl.member) push = false;
 					}
-					found.push(tbl); // Push the table to the output
+					if (push) found.push(tbl); // Push the table to the output
 				}
 			});
 		}

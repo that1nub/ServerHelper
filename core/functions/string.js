@@ -70,3 +70,55 @@ global.spaceObject = function(inObject, leftSide, rightSide, pairSpacer, normalS
     // Return and stitch together the output
     return output.join('\n');
 }
+
+// This function returns a string of what is interpretted, but doesn't actually parse and run it.
+global.parsePunishment = function(input) {
+    if (!isString(input)) throw new Error("parsePunishment: Bad argument #1: Expected a string, got " + typeof input);
+
+    let out = [];
+
+    let punishments = input.split(/;+/g);
+    for (let i = 0; i < punishments.length; i++) {
+        punishments[i] = punishments[i].trim();
+
+        let args = punishments[i].split(/ +/g);
+
+        switch (args.shift().toLowerCase()) {
+            case "mute": {
+                if (!isString(args[0])) args[0] = "forever"
+
+                let time = parseTime(args[0]);
+                if (isNumber(time) && Number.isFinite(time)) {
+                    out.push(`Mute member for ${formatTime(time)}.`);
+                } else {
+                    out.push("Mute member indefinitely.");
+                }
+            } break;
+
+            case "delete": {
+                out.push("Delete member's message that caused infraction.");
+            } break;
+
+            case "kick": {
+                out.push("Kick member.");
+            } break;
+
+            case "ban": {
+                if (!isString(args[0])) args[0] = "forever"
+
+                let time = parseTime(args[0]);
+                if (isNumber(time) && Number.isFinite(time)) {
+                    out.push(`Temporarily ban member for ${formatTime(time)}.`);
+                } else {
+                    out.push("Permanently ban member.");
+                }
+            } break;
+
+            default: {
+                out.push("Invalid input.");
+            } break;
+        }
+    }
+
+    return out;
+}

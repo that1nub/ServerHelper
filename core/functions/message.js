@@ -4,11 +4,12 @@ Discord.TextChannel.prototype.msg = function(text, attachments) {
 Discord.DMChannel.prototype.msg = Discord.TextChannel.prototype.msg;
 Discord.User.prototype.msg = Discord.TextChannel.prototype.msg;
 
-Discord.TextChannel.prototype.setResponseListener = function(timeout = 30000, onRespond = "default", args, can) {
-	if (!isNumber(timeout)) throw new Error('message.setResposeListener: bad argument #1: must be a number, got ' + typeof timeout);
-	if (!isString(onRespond)) throw new Error('message.setResponseListener: bad argument #2: must be a string, got ' + typeof onRespond);
-	if (can !== undefined && !isArray(can)) throw new Error('message.setResponseListener: bad argument #4: must be undefined or an array, got ' + typeof can);
+Discord.TextChannel.prototype.setResponseListener = function(args, can, timeout = 30000, onRespond = "default") {
+	if (!isNumber(timeout)) throw new Error('message.setResposeListener: bad argument #3: must be a number, got ' + typeof timeout);
+	if (!isString(onRespond)) throw new Error('message.setResponseListener: bad argument #4: must be a string, got ' + typeof onRespond);
+	if (can !== undefined && !isArray(can)) throw new Error('message.setResponseListener: bad argument #2: must be undefined or an array, got ' + typeof can);
 	response[this.id] = {
+		id: this.id,
 		timeout: timeout,
 		can: can,
 		args: args,
@@ -26,8 +27,6 @@ Discord.TextChannel.prototype.removeResponseListener = function() {
 Discord.DMChannel.prototype.removeResponseListener = Discord.TextChannel.prototype.removeResponseListener;
 Discord.User.prototype.removeResponseListener = Discord.TextChannel.prototype.removeResponseListener;
 
-
-
 Discord.Message.prototype.setReactListener = function(timeout = 30000, onReact = 'default', args, can) {
 	if (!isNumber(timeout)) throw new Error('message.setReactListener: bad argument #1: must be a number, got ' + typeof timeout);
 	if (!isString(onReact)) throw new Error('message.setReactListener: bad argument #2: must be a string, got ' + typeof onReact);
@@ -38,13 +37,17 @@ Discord.Message.prototype.setReactListener = function(timeout = 30000, onReact =
 		args: args,
 		onReact: onReact,
 		created: Date.now(),
-		changes: {added: 0, removed: 0}
+		id: this.id,
+		guild: this.guild.id,
+		channel: this.channel.id
 	};
 	saveReactListeners();
 }
 Discord.Message.prototype.removeReactListener = function() {
 	delete react[this.id];
 }
+
+
 
 global.messageDevelopers = function(text, attachments) {
 	for (let i = 0; i < botInfo.developers.length; i++) {
@@ -64,7 +67,7 @@ global.mdt = function(text, attachments) {
 }
 
 global.removeFormatting = function(str) {
-	return str.replace(/`+/g, '').replace(/\*+/g, '').replace(/\|+/g, '').replace(/_+/g, '').replace(/~+/g, '');
+	return str.replace(/`+/g, '').replace(/\*+/g, '').replace(/\|+/g, '').replace(/_+/g, '').replace(/~+/g, '').replace(/>+/g, '');
 }
 
 global.parseArgs = function(str, adv = true) {

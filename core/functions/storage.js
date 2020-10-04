@@ -14,10 +14,16 @@ global.loadStorage = function(dir = directory.storage) {
 				let fn = files[i].substring(0, files[i].indexOf('.'));
 				try {
 					let info = JSON.parse(FileSystem.readFileSync(f));
-					storage[d].set(fn, botInfo.def[d] ? copyObject(copyObject({}, botInfo.def[d]), info) : copyObject({}, info));
+					if (storage[d] instanceof Map)
+						storage[d].set(fn, botInfo.def[d] ? copyObject(info, botInfo.def[d]) : info);
+					else
+						storage[d] = botInfo.def[d] ? copyObject(info, botInfo.def[d]) : info;
 				} catch (err) {
 					console.log('Error loading storage for ' + f, err.stack);
-					storage[d].set(fn, botInfo.def[d] ? copyObject({}, botInfo.def[d]) : {});
+					if (storage[d] instanceof Map)
+						storage[d].set(fn, botInfo.def[d] ? copyObject({}, botInfo.def[d]) : {});
+					else
+						storage[d] = botInfo.def[d] ? copyObject({}, botInfo.def[d]) : {};
 				}
 			}
 		}
@@ -29,14 +35,14 @@ global.loadStorage = function(dir = directory.storage) {
 global.dirHasFile = function(dir, file, sync = true) {
 	if (!isString(dir)) throw new Error("dirHasFile: Argument one must be a string, got " + typeof dir);
 	if (!isString(file)) throw new Error("dirHasFile: Argument two must be a string, got " + typeof file);
-	
+
 	if (sync) {
 		try {
 			let files = FileSystem.readdirSync(dir);
 		 	for (let i = 0; i < files.length; i++) {
 				let f = dir + '/' + files[i];
 		 		if (!files[i].includes('.')) {
-		 			return dirHasFile(f, file);	
+		 			return dirHasFile(f, file);
 		 		} else if (files[i] === file) {
 		 			return f;
 				}
@@ -54,7 +60,7 @@ global.dirHasFile = function(dir, file, sync = true) {
 			for (let i = 0; i < files.length; i++) {
 				let f = dir + '/' + files[i];
 		 		if (!files[i].includes('.')) {
-		 			return dirHasFile(f, file, false);	
+		 			return dirHasFile(f, file, false);
 		 		} else if (files[i] === file) {
 		 			return f;
 				}
@@ -66,7 +72,7 @@ global.dirHasFile = function(dir, file, sync = true) {
 global.loadCommands = function(sync = true, dir = directory.commands) {
 	if (sync) {
 		try {
-			let files = FileSystem.readdirSync(dir);	
+			let files = FileSystem.readdirSync(dir);
 			for (let i = 0; i < files.length; i++){
 				let f = dir + '/' + files[i];
 				if (!files[i].includes('.')) {
@@ -85,7 +91,7 @@ global.loadCommands = function(sync = true, dir = directory.commands) {
 				console.log('Error loading command directory', err.stack);
 				return;
 			}
-			
+
 			for (let i = 0; i < files.length; i++){
 				let f = dir + '/' + files[i];
 				if (!files[i].includes('.')) {
@@ -106,13 +112,13 @@ global.reloadCommand = function(cmd = "") {
 	}
 }
 
+global.blacklisted = {};
 global.fetchBlacklist = function(sync = true, file = directory.blacklist) {
 	if (sync) {
 		try {
 			blacklisted = JSON.parse(FileSystem.readFileSync(file));
 		} catch (err) {
 			console.log('Unable to fetch blacklisted users', err.stack);
-			blacklisted = {};
 		}
 		let bKeys = Object.keys(blacklisted);
 		for (let i = 0; i < bKeys.length; i++) {
@@ -132,13 +138,13 @@ global.fetchBlacklist = function(sync = true, file = directory.blacklist) {
 global.save = function(file, info) {
 	if (!isString(file)) throw new Error('save: first argument must be a string, got ' + typeof file);
 	if (!isString(info)) throw new Error('save: second argument must be a string, got ' + typeof file);
-	
+
 	FileSystem.open(file, 'w', (err, fd) => {
 		if (err) {
 			console.log('Error saving to file ', file, '\n', err.stack);
 			return;
 		}
-		
+
 		FileSystem.write(fd, info, err => {
 			if (err) console.log('Error saving to file ', file, '\n', err.stack);
 		});

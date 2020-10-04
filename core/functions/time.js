@@ -12,11 +12,11 @@ global.formatTime = function(ms, showMs){
     let hour = Math.floor((t / 3600) % 24);
     let day = Math.floor((t / 3600) / 24);
 
-    if (day > 0) tbl.push((day === 1) ? "one day" : day + " days");
-    if (hour > 0) tbl.push((hour === 1) ? "one hour" : hour + " hours");
-    if (min > 0) tbl.push((min === 1) ? "one minute" : min + " minutes");
-    if (sec > 0) tbl.push((sec === 1) ? "one second" : sec + " seconds");
-    if (showMs && mil > 0) tbl.push((mil === 1) ? "one millisecond" : mil + " milliseconds");
+    if (day > 0) tbl.push(day + " day" + (day > 1 ? "s" : ""));
+    if (hour > 0) tbl.push(hour + " hour" + (hour > 1 ? "s" : ""));
+    if (min > 0) tbl.push(min + " minute" + (min > 1 ? "s" : ""));
+    if (sec > 0) tbl.push(sec + " second" + (sec > 1 ? "s" : ""));
+    if (showMs && mil > 0) tbl.push(mil + " millisecond" + (mil > 1 ? "s" : ""));
 
     if (tbl.length === 0) return "forever";
     return tbl.join(" ");

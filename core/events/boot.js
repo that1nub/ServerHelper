@@ -14,12 +14,18 @@ bot.on('ready', () => {
 			let memUse = process.memoryUsage();
 			let used = memUse.heapUsed;
 			let total = memUse.heapTotal;
-			message += "\nMemory: **" + ((used/total) * 100).toFixed(3) + "%** (" + (used/1000/1000).toFixed(3) + " / " + (total/1000/1000).toFixed(3) + " MB)";
+			message += "\nMemory: **" + ((used/total) * 100).toFixed(3) + "%** (" + (used/1024/1024).toFixed(3) + " / " + (total/1024/1024).toFixed(3) + " MB)";
 			message += "\nBoot Time: **" + time + " seconds**.";
 			channel.msg(message);
 		}
 	}
 
+	if (botInfo.maintenance) {
+		bot.user.setPresence({
+			status: 'dnd'
+		});
+	}
+
 	// console.log(bot.ws);
-	bot.ws.on('message', handleRawMessage);
+	// bot.ws.on('message', handleRawMessage);
 });

@@ -1,21 +1,25 @@
 global.FileSystem = require('fs');
 global.Discord    = require('discord.js');
-global.bot        = new Discord.Client();
+global.Jimp       = require('jimp');
+
+global.bot = new Discord.Client({partials: ['MESSAGE', 'CHANNEL', 'REACTION']});
 
 //Variables
 global.bootTime = Date.now();
 
 let root = process.cwd();
-global.directory = { //If modifying this, make sure all values are a string and not anything else
-	root:      root,
-	commands:  root + "/commands",
-	core:      root + "/core",
-	storage:   root + "/storage", //This is read in `loadStorage()` guild and user data is saved in this under `/storage/guilds` and `/storage/users`
-	blacklist: root + "/blacklist.json",
-	botInfo:   root + "/bot_information.json",
-	react:     root + "/react.json",
-	response:  root + "/response.json"
-}
+global.directory   = {} //If modifying this, make sure all values are a string and not anything else
+directory.root     = root,
+directory.commands = root    + "/commands",
+directory.core     = root    + "/core",
+directory.storage  = root    + "/storage", //This is read in `loadStorage()` guild and user data is saved in this under `/storage/guilds` and `/storage/users`
+directory.images   = root    + "/images",
+directory.botInfo  = root    + "/bot_information.json"
+
+directory.blacklist = directory.storage + "/blacklist.json",
+directory.react     = directory.storage + "/react.json",
+directory.response  = directory.storage + "/response.json",
+directory.reminders = directory.storage + "/reminders.json"
 
 //Before we load anything, we want to make sure all the folders we will need exist. If not, we are going to create them.
 let keys = Object.keys(directory);
@@ -87,6 +91,10 @@ loadReactListeners();
 //Response
 console.log('Listener: fetching response channels...', directory.response);
 loadResponseChannels();
+
+// Load reminders
+// console.log('Reminders: fetching reminders...', directory.reminders);
+// loadReminders();
 
 //Load commands
 console.log('Loading commands...', directory.commands);

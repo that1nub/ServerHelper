@@ -65,15 +65,6 @@ new Command({
         let duration = parseTime(args.shift());
         let reason = (args.length > 0) ? args.join(' ').substring(0, 1500) : "No reason specified.";
 
-        storage.guilds.get(message.guild.id).bans[member.id] = {
-            tag: member.user.tag,
-            id: member.id,
-            banned: message.createdTimestamp,
-            duration: duration,
-            reason: reason,
-            by: caller.user.id
-        }
-        
         message.guild.saveStorage();
         member.user.msg("Oh no!\nYou have been banned from **" + message.guild.name + "**\nReason: " + reason + "\nBy whom: " + caller.user.tag + "\nDuration: " + formatTime(duration));
 

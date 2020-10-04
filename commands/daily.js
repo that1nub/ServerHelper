@@ -33,7 +33,7 @@ new Command({
             }
             message.channel.msg(botInfo.emotes.success + "|Daily claimed.```\n" + spaceObject(obj, "| ", " |", ": ", " ", "-", 3) + "```")
         } else {
-            message.channel.msg(`${botInfo.emotes.fail}|You must wait a day to claim your daily income.\nYou will be able to claim in ${(lastUsed + time.d) - now}`);
+            message.channel.msg(`${botInfo.emotes.fail}|You must wait a day to claim your daily income.\nYou will be able to claimed in **${formatTime((lastUsed + time.d) - now)}**.`);
         }
     }
 });
