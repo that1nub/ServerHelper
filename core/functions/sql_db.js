@@ -1,9 +1,9 @@
 try {
     MySQL.createConnection({
-        host: '104.171.124.210',
-        database: 'c5bot_data',
-        user: 'c5noobler',
-        password: 'Sbpvj7ipJQ7qrG0kIs',
+        host: '',
+        database: '',
+        user: '',
+        password: '',
         multipleStatements: true
     }).then(connection => {
         global.DataBase = connection;
