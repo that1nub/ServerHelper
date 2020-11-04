@@ -10,13 +10,16 @@ bot.on('ready', () => {
 	if (guild) {
 		let channel = guild.channels.resolve(botInfo.ready.channel);
 		if (channel) {
-			let message = botInfo.emotes.success + botInfo.emotes.info + "|Bot started! Here's some information:";
 			let memUse = process.memoryUsage();
-			let used = memUse.heapUsed;
-			let total = memUse.heapTotal;
-			message += "\nMemory: **" + ((used/total) * 100).toFixed(3) + "%** (" + (used/1024/1024).toFixed(3) + " / " + (total/1024/1024).toFixed(3) + " MB)";
-			message += "\nBoot Time: **" + time + " seconds**.";
-			channel.msg(message);
+			let [used, total] = [memUse.heapUsed, memUse.heapTotal];
+
+			let embed = new Discord.MessageEmbed()
+				.setColor(0x0096ff)
+				.setTitle('Startup Information')
+				.addField('Memory Usage:', `**${((used/total) * 100).toFixed(3)}%** (${(used/1024/1024).toFixed(3)} / ${(total/1024/1024).toFixed(3)} MB)`)
+				.addField('Startup time:', `**${time}** seconds.`);
+
+			channel.msg({embed});
 		}
 	}
 
@@ -25,6 +28,11 @@ bot.on('ready', () => {
 			status: 'dnd'
 		});
 	}
+
+	// Retrieve the configuration from the DataBase
+	bot.guilds.cache.forEach(guild => {
+		syncGuild(guild.id);
+	});
 
 	// console.log(bot.ws);
 	// bot.ws.on('message', handleRawMessage);

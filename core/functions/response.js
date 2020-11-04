@@ -47,6 +47,35 @@ global.responseFuncs = {
 			delete response[info.self.id];
 		}
 	},
+	"restart": async function(info, args) {
+		let msg = info.message.content.toLowerCase();
+		if (msg.startsWith('cancel')) {
+			restarting = false;
+
+			delete response[info.self.id];
+			info.message.channel.msg(`${botInfo.emotes.success}|Canceled, bot will no longer restart.`);
+
+			let guild = bot.guilds.resolve(botInfo.ready.guild);
+			if (guild) {
+				let channel = guild.channels.resolve(botInfo.ready.channel);
+				if (channel) {
+					channel.msg(`${botInfo.emotes.info}|Restart canceled by **${info.message.author.tag}**.`);
+				}
+			}
+		} else if (msg.startsWith('restart now')) {
+			await info.message.channel.msg(`${botInfo.emotes.success}|Forcing restart now...`);
+
+			let guild = bot.guilds.resolve(botInfo.ready.guild);
+			if (guild) {
+				let channel = guild.channels.resolve(botInfo.ready.channel);
+				if (channel) {
+					await channel.msg(`${botInfo.emotes.info}|Restart forced now by **${info.message.author.tag}**.`);
+				}
+			}
+			
+			process.exit();
+		}
+	},
 	"kodersPurge": async function(info, args) {
 		let msg = info.message.content.toLowerCase();
 		if (msg.startsWith("yes")) {

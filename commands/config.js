@@ -135,7 +135,9 @@ cmd.onCall = function(parsedArgs, args, message) {
 		switch (args.shift().toLowerCase()) {
 			case "prefix": {
 				if (args[0]) {
-					plugins.prefix = args[0];
+					let pref = args[0].substring(0, 10);
+					plugins.prefix = pref;
+					DataBase.query(`UPDATE guildConfig SET prefix = '${pref}' WHERE guildID = '${message.guild.id}'`);
 					message.channel.msg(`${botInfo.emotes.success}|Prefix set to \`${plugins.prefix}\`.`);
 				} else {
 					let embed = new Discord.MessageEmbed()

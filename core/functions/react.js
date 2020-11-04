@@ -7,12 +7,13 @@ reactFuncs = {
 	},
 	"reactGroupCreate": async function(info, emoji, args, isAdded) {
 		if (isAdded) {
+			let size = info.message.reactions.cache.size;
 			if (emoji.id) {
 				if (bot.emojis.resolve(emoji.id)) {
 					info.message.react(emoji.id);
-					react[info.self.id].args.emotes[emoji.id] = args.roles[info.message.reactions.cache.size - 1];
+					react[info.self.id].args.emotes[emoji.id] = args.roles[size - 1];
 				} else {
-					message.channel.msg(`${botInfo.emotes.fail}|I'm not in a guild with that emote!`).then(newMsg => {newMsg.delete({timeout: 5});});
+					info.channel.msg(`${botInfo.emotes.fail}|I'm not in a guild with that emote!`).then(newMsg => {newMsg.delete({timeout: 5});});
 					await info.message.reactions.removeAll();
 					for (let i = 0; i < args.emotes.length; i++) {
 						await info.message.react(args.emotes[i]);
@@ -20,13 +21,32 @@ reactFuncs = {
 				}
 			} else {
 				info.message.react(emoji.name);
-				react[info.self.id].args.emotes[emoji.name] = args.roles[info.message.reactions.cache.size - 1];
+				react[info.self.id].args.emotes[emoji.name] = args.roles[size - 1];
 			}
 
-			if (info.message.reactions.cache.size == args.roles.length) {
+			let emotes = [];
+			let keys = Object.keys(react[info.self.id].args.emotes);
+			for (let i = 0; i < keys.length; i++) {
+				let id = keys[i];
+				let emote = id;
+				if (id.match(/[0-9]+/))
+					emote = `<:a:${id}>`;
+				emotes.push(`${emote} : <@&${react[info.self.id].args.emotes[id]}>`)
+			}
 
+			let embed = info.message.embeds[0];
+
+			let r = args.roles;
+			if (size >= r.length) {
+				embed.setDescription(emotes.join('\n'));
+
+				info.message.edit('', {embed}).catch(console.log);
+
+				delete react[info.self.id];
 			} else {
-				
+				embed.setDescription(`Setup progress: ${size}/${r.length}\n\n${emotes.join('\n')}\n\nAdd a reaction for <@&${r[size]}>`);
+
+				info.message.edit({embed}).catch(console.log);
 			}
 		}
 	}

@@ -13,7 +13,25 @@ bot.on('message', message => {
 	let prefix = ""; // If in DMs, this will let them run commands without a prefix
 	if(guild) {
 		sto.guild = guild.setupStorage();
-		prefix = storage.guilds.get(guild.id).plugins.prefix;
+
+		let sync = false;
+		if (!cache.lastSync.get(guild.id)) 
+			sync = true;
+		else if (Date.now() - cache.lastSync.get(guild.id) >= 60000) {
+			sync = true;
+		}
+
+		if (sync) {
+			if (DataBase) {
+				syncGuild(guild.id);
+			}
+		}
+
+		if (cache.guilds.get(guild.id)) {
+			prefix = cache.guilds.get(guild.id).prefix;
+		} else {
+			prefix = storage.guilds.get(guild.id).plugins.prefix;
+		}
 	}
 
 	let msg = message.content.trim();
@@ -26,6 +44,7 @@ bot.on('message', message => {
 
 	let [args, split] = parseArgs(msg.slice(prefix.length));
 	let cmd = split.length ? removeFormatting(split.shift()).toLowerCase() : " "; // The space prevents running a command
+	cmd = cmd.substring(0, 100); // Make sure the cmd isn't too long. Any command more than 100 (even then) is unrealistic.
 
 	// Command handler
 	if (msg.toLowerCase().startsWith(prefix.toLowerCase()) && msg.length > prefix.length) {
@@ -91,9 +110,12 @@ bot.on('message', message => {
 							lvl.is++;
 							lvl.experience -= xptolvl;
 							channel.msg(leveling.message.replace(/\$user_level/g, lvl.is).replace(/\$user/g, message.member.displayName));
-						}
 
-						//TODO: rank rewards
+							let rewards = leveling.rewards[String(lvl.is)];
+							if (isArray(rewards)) {
+								message.member.roles.add(rewards).then().catch(console.log);
+							}
+						}
 
 						lvl.lastGained = message.createdTimestamp;
 						guild.saveStorage();

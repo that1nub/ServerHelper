@@ -1,8 +1,16 @@
 global.FileSystem = require('fs');
 global.Discord    = require('discord.js');
 global.Jimp       = require('jimp');
+global.MySQL      = require('mysql2/promise');
+global.http       = require('http');
 
 global.bot = new Discord.Client({partials: ['MESSAGE', 'CHANNEL', 'REACTION']});
+
+global.cache = {
+	guilds: new Map(),
+	users: new Map(),
+	lastSync: new Map()
+}
 
 //Variables
 global.bootTime = Date.now();
@@ -10,11 +18,11 @@ global.bootTime = Date.now();
 let root = process.cwd();
 global.directory   = {} //If modifying this, make sure all values are a string and not anything else
 directory.root     = root,
-directory.commands = root    + "/commands",
-directory.core     = root    + "/core",
-directory.storage  = root    + "/storage", //This is read in `loadStorage()` guild and user data is saved in this under `/storage/guilds` and `/storage/users`
-directory.images   = root    + "/images",
-directory.botInfo  = root    + "/bot_information.json"
+directory.commands = root + "/commands",
+directory.core     = root + "/core",
+directory.storage  = root + "/storage", //This is read in `loadStorage()` guild and user data is saved in this under `/storage/guilds` and `/storage/users`
+directory.images   = root + "/images",
+directory.botInfo  = root + "/bot_information.json"
 
 directory.blacklist = directory.storage + "/blacklist.json",
 directory.react     = directory.storage + "/react.json",

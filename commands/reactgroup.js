@@ -18,7 +18,7 @@ new Command({
 
         let found = [];
         for (let i = 0; i < keys.length; i++) {
-            if (rg[keys[i]].toLowerCase().includes(args.join(' '))) {
+            if (keys[i].toLowerCase().includes(args.join(' '))) {
                 found.push(keys[i]);
             }
         }

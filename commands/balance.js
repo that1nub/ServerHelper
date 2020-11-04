@@ -16,15 +16,15 @@ new Command({
         }
 
         let data = storage.users.get(targ.user.id);
-        
+
         let name = targ.user.username;
         if (targ.member)
             name = targ.member.displayName;
 
         if (data) {
-            message.channel.msg(`${botInfo.emotes.info}|**${name}**'s balance is **$${data.currency.balance}**.`);
+            message.channel.msg(`${botInfo.emotes.info}|**${name}**'s balance is **$${data.currency.balance.toFixed(2)}**.`);
         } else {
-            message.channel.msg(`${botInfo.emotes.info}|**${name}**'s balance is **$${botInfo.def.users.currency.balance}**.`);
+            message.channel.msg(`${botInfo.emotes.info}|**${name}**'s balance is **$${botInfo.def.users.currency.balance.toFixed(2)}**.`);
         }
     }
 });

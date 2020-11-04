@@ -64,3 +64,34 @@ Discord.Guild.prototype.findChannels = function(needle) {
 
 	return found;
 }
+
+Discord.Guild.prototype.findMembers = async function(needle) {
+	if (!isString(needle)) throw new Error("Guild.findMembers: Bad argument #1: Expected string, got " + typeof needle);
+	needle = needle.toLowerCase();
+
+	let res = this.members.resolve(needle);
+	let mat = needle.match(/<@[0-9]+>/g);
+
+	let found = [];
+
+	if (res) {
+		found.push(res);
+	} else if (isArray(mat)) {
+		for (let i = 0; i < mat.length; i++) {
+			let id = mat[i].match(/[0-9]+/)[0];
+			let res = this.members.resolve(id);
+			if (res) {
+				found.push(res);
+			}
+		}
+	} else {
+		let members = await this.members.fetch();
+		members.forEach((member, id, map) => {
+			if (member.displayName.toLowerCase().includes(needle) || member.user.tag.toLowerCase().includes(needle)) {
+				found.push(member);
+			}
+		});
+	}
+
+	return found;
+}

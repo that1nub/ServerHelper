@@ -1,3 +1,5 @@
+// This file was written with the help of Slime_Cubed, a close friend
+
 'use strict';
 
 var mathEval = undefined;
@@ -364,10 +366,21 @@ funcs.set('n', function funcNeg(input){
 // Operators act as special functions, and always take two arguments
 // The order of each operator, executed from lowest to highest
 // All unary operators should be repeated in the 'ops' list, for splitting
-const ops = ['^','**','*','/','%','mod','+','-'];
-const order=[ 0,  0,   1,  1,  1,   1,   2,  2 ];
+const ops = ['!','^','**','*','/','%','mod','+','-'];
+const order=[ 0,  1,  1,   2,  2,  2,   2,   3,  3 ];
 const uniOps = ['-'];
 const uniOrder=[-1 ];
+
+function factorial(num) {
+	if (num < 0)
+		return -1;
+
+	else if (num == 0)
+		return 1;
+
+	else
+		return num * factorial(num - 1);
+}
 
 funcs.set('^', function opExp(a, b) {return Math.pow(a, b);});
 funcs.set('**', function opExp(a, b) {return Math.pow(a, b);});
@@ -377,6 +390,7 @@ funcs.set('+', function opAdd(a, b) {return a + b;});
 funcs.set('-', function opSub(a, b) {return (a ? a : 0) - b;});
 funcs.set('%', function opMod(a, b) {return a % b;});
 funcs.set('mod', function opMod(a, b) {return a % b;});
+funcs.set('!', function factorialize(a, b) {return factorial(a);});
 
 })();
 

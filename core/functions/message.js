@@ -67,7 +67,7 @@ global.mdt = function(text, attachments) {
 }
 
 global.removeFormatting = function(str) {
-	return str.replace(/`+/g, '').replace(/\*+/g, '').replace(/\|+/g, '').replace(/_+/g, '').replace(/~+/g, '').replace(/>+/g, '');
+	return str.replace(/`+/g, '\\`').replace(/\*+/g, '\\*').replace(/\|+/g, '\\|').replace(/_+/g, '\\_').replace(/~+/g, '\\~').replace(/>+/g, '\\>');
 }
 
 global.parseArgs = function(str, adv = true) {
@@ -103,6 +103,7 @@ global.parseArgs = function(str, adv = true) {
 				let newCmd = out[i].substring(1); //We want the command to be something, we don't want an empty cmd
 				if (newCmd.trim().length) {
 					cmd = newCmd;
+					if (!advOut[cmd]) advOut[cmd] = []; //If the advanced output doesn't have a key for our variable, create one
 					continue;
 				}
 			}

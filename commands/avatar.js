@@ -11,6 +11,6 @@ new Command({
                 targ = newTarg[0];
         }
 
-        message.channel.msg(targ.user.displayAvatarURL());
+        message.channel.msg(targ.user.displayAvatarURL({dynamic: true}));
     }
 });

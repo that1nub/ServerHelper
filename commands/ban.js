@@ -57,6 +57,10 @@ new Command({
             return;
         }
 
+        if (member.verifyMod()) { // Mods can ban other mods
+            message.channel.msg(botInfo.emotes.fail + "|You can't ban another mod.");
+        }
+
         if (args.length == 0) {
             message.channel.msg(botInfo.emotes.fail + "|You must specify the duration. Put 0 for indefinite.");
             return;
@@ -73,7 +77,7 @@ new Command({
             message.channel.msg(botInfo.emotes.success + "|Successfully banned **" + member.user.tag + "**.");
         }).catch(
         err => {
-            message.channel.msg(botInfo.emotes.fail + "|Unable to ban **" + member.user.tag + "**");
+            message.channel.msg(botInfo.emotes.fail + "|Unable to ban **" + member.user.tag + "**.```\n" + err + "```");
         });
     }
 });
