@@ -1,7 +1,8 @@
 new Command({
     title: "React Group",
     desc: "Starts the setup of a react for role system.",
-    call: ['rg', 'reactgroup'],
+    category: "Server Management",
+    call: ['reactgroup', 'rg'],
     onCall: function(parsedArgs, args, message) {
         if (!message.guild) {
             message.channel.msg(`${botInfo.emotes.fail}|You must be on a guild to use this.`);

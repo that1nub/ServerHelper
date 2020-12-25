@@ -1,6 +1,7 @@
 new Command({
     title: "Strike",
     desc: "Strike/Warn a user for innapropriate behavior.",
+    category: "Moderation",
     call: ['strike', 'warn'],
     usage: "<user> {reason}",
     onCall: function(parsedArgs, args, message) {
@@ -46,6 +47,12 @@ new Command({
             if (!strike) {
                 return message.channel.msg(`${botInfo.emotes.fail}|There is no strike with this index.`);
             }
+
+            if (parsedArgs.edit.length === 0) {
+                return message.channel.msg(`${botInfo.emotes.fail}|You must specify the new reason.`);
+            }
+
+            
         } else {
             let strike    = copyObject({}, botInfo.def.strike);
             strike.target = target.id;

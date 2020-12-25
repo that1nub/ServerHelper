@@ -1,6 +1,7 @@
 new Command({
     title: "Ban",
     desc: "Ban a member from the guild.",
+    category: "Moderation",
     usage: "<member> [duration] {reason}",
     call: ['ban', 'banish'],
     onCall: function(parsedArgs, args, message) {

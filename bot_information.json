@@ -1,12 +1,18 @@
 {
-    "token": "yahuh",
+    "token": "",
+    "database": {
+        "host": "",
+        "database": "",
+        "user": "",
+        "password": ""
+    },
     "maintenance": false,
     "information": {
         "created": "Saturday, April 22, 2020 @ 4:52 PM Central Time (GTM-5)",
         "finished": "WIP",
         "links": {
-            "invite": "No invite yet.",
-            "website": "No website yet."
+            "invite": "https://discord.gg/VbgFtCU",
+            "website": "https://nubstoys.xyz/serverhelper/"
         }
     },
     "emotes": {
@@ -32,6 +38,11 @@
         "guild": "667514990131150904",
         "channel": "764673405169303582",
         "log": "764673405169303582"
+    },
+    "devlog": {
+        "guildID": "667514990131150904",
+        "guildCreate": "788279817354215466",
+        "guildDelete": "788280082383896577"
     },
     "leveling": {
         "base": 50,

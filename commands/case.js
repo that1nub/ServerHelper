@@ -1,6 +1,7 @@
 new Command({
     title: "Cases",
     desc: "View a case.",
+    category: "Moderation",
     call: ['case'],
     usage: "(case #)",
     onCall: function(parsedArgs, args, message) {

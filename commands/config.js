@@ -2,6 +2,7 @@
 let cmd = {};
 cmd.title = "Configuration";
 cmd.desc = "Configurate how I work on your guild.";
+cmd.category = "Server Management";
 cmd.call = ['config', 'conf', 'cfg', 'configuration'];
 
 cmd.website = "https://nubstoys.xyz/serverhelper/docs/config.html";
@@ -634,7 +635,7 @@ cmd.onCall = function(parsedArgs, args, message) {
 								let a = message.author;
 
 								message.channel.msg(`${botInfo.emotes.success}|Leave message set to \`${msg}\`\nPreview: ${msg.replace(/\$user_count/g, g.memberCount).replace(/\$user_id/g, a.id).replace(/\$user_name/g, m.displayName).replace(/\$user_tag/g, a.tag).replace(/\$user/g, a)}`);
-							} else message.channel.msg(`${botInfo.emotes.info}|The leave message is: \`${plugins.join.message}\``);
+							} else message.channel.msg(`${botInfo.emotes.info}|The leave message is: \`${plugins.leave.message}\``);
 						} break;
 
 						case "channel": {

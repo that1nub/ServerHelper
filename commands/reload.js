@@ -1,6 +1,7 @@
 new Command({
     title: "Reload",
     desc: "Reload a command.",
+    category: "Developer",
     usage: "{File name}",
     can: botInfo.developers,
     call: ['reload'],

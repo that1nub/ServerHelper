@@ -1,6 +1,7 @@
 new Command({
     title: "Leaderboard",
     desc: "Get the rank leaderboard on the server.",
+    category: "User Information",
     call: ['leaderboard', 'lb'],
     onCall: function(parsedArgs, args, message) {
         if (!message.guild) {

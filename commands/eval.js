@@ -1,14 +1,16 @@
-let normalLog = console.log;
 
 new Command({
 	title: "Evaluate",
 	desc: "Evaluate input javascript to make the bot perform actions.",
+    category: "Developer",
 	can: botInfo.developers,
 	call: ['eval', 'evaluate'],
 	onCall: function(args, split, message) {
 		let consoleLogs = [];
+
+		let normalLog = console.log;
 		console.log = function(message) {
-			if (typeof message === "object")
+			if (typeof message === "object" || message instanceof Array)
 				consoleLogs.push(JSON.stringify(message))
 			else
 				consoleLogs.push(message);

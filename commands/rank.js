@@ -1,6 +1,7 @@
 new Command({
     title: "Rank",
     desc: "Get someone's rank the current server.",
+    category: "User Information",
     call: ['rank'],
     onCall: function(parsedArgs, args, message) {
         if (!message.guild) {

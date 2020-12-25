@@ -1,8 +1,9 @@
 new Command({
     title: "Pardon",
     desc: "Set a strike/warning inactive.",
+    category: "Moderation",
     call: ['pardon'],
-    usage: "<user> <strike #> {reason}",
+    usage: "<user> (strike #) {reason}",
     onCall: function(parsedArgs, args, message) {
         if (!message.guild) {
             return message.channel.msg(`${botInfo.emotes.fail}|You must be on a guild to use this command.`);

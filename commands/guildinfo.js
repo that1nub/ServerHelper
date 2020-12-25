@@ -1,6 +1,7 @@
 new Command({
     title: "Guild Information",
     desc: "Get information about the guild.",
+    category: "Server Information",
     call: ['guild', 'guildinfo', 'server', 'serverinfo'],
     onCall: function(parsedArgs, args, message){
         if (!message.guild) {

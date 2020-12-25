@@ -1,6 +1,7 @@
 new Command({
     title: "Restart",
     desc: "Restart the bot.",
+    category: "Developer",
     call: ['restart'],
     can: botInfo.developers,
     onCall: async function(parsedArgs, args, message) {

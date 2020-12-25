@@ -5,9 +5,7 @@ global.Command = function(obj) {
 
 	obj.title          = isString(obj.title)          ? obj.title          : "Undefined";
 	obj.can            = isObject(obj.can)            ? obj.can            : [];
-	obj.category       = isObject(obj.category)       ? obj.category       : {emote: "", text: "Other"};
-	obj.category.emote = isString(obj.category.emote) ? obj.category.emote : "";
-	obj.category.text  = isString(obj.category.text)  ? obj.category.text  : "Other";
+	obj.category       = isString(obj.category)       ? obj.category       : "Other";
 	obj.usage          = isString(obj.usage)          ? obj.usage          : "";
 	obj.examples       = isObject(obj.examples)       ? obj.examples       : [];
 	obj.hideFromHelp   = isBool(obj.hideFromHelp)     ? obj.hideFromHelp   : false;

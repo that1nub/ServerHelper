@@ -46,6 +46,8 @@ bot.on('message', message => {
 	let cmd = split.length ? removeFormatting(split.shift()).toLowerCase() : " "; // The space prevents running a command
 	cmd = cmd.substring(0, 100); // Make sure the cmd isn't too long. Any command more than 100 (even then) is unrealistic.
 
+	let rawArgString = message.content.substring(message.content.indexOf(cmd) + cmd.length);
+
 	// Command handler
 	if (msg.toLowerCase().startsWith(prefix.toLowerCase()) && msg.length > prefix.length) {
 		let can = (botInfo.developers.includes(author.id) || botInfo.testers.includes(author.id)) || !botInfo.maintenance;
@@ -64,7 +66,7 @@ bot.on('message', message => {
 									if (cmd === commands[i].call[x].toLowerCase()) {
 										ran = true;
 										try {
-											commands[i].onCall(args, split, message);
+											commands[i].onCall(args, split, message, rawArgString);
 										} catch (err) {
 											cLog(author.tag + ' (' + author.id + ') has experienced an error running ', commands[i].title, '\n', err.stack);
 											messageDevelopers(botInfo.emotes.caution + '|**' + author.tag + '** (' + author.id + ') has encountered an error in **' + commands[i].title + '**```\n' + err.stack + '```');

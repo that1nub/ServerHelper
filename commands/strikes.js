@@ -3,6 +3,7 @@ let pageCount = 5;
 new Command({
     title: "Strikes",
     desc: "View the strikes of a user.",
+    category: "Moderation",
     call: ['strikes', 'warns'],
     usage: "<user> (page #)",
     onCall: function(parsedArgs, args, message) {

@@ -1,6 +1,7 @@
 new Command({
     title: "Bot Information",
     desc: "Get information related to the bot.",
+    category: "Bot Related",
     call: ['bot', 'botinfo', 'botinformation'],
     onCall: function(parsedArgs, args, message) {
         let info = botInfo.information;

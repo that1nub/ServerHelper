@@ -31,7 +31,9 @@ bot.on('ready', () => {
 
 	// Retrieve the configuration from the DataBase
 	bot.guilds.cache.forEach(guild => {
-		syncGuild(guild.id);
+		if (DataBase) {
+			syncGuild(guild.id);
+		}
 	});
 
 	// console.log(bot.ws);

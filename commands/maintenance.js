@@ -1,6 +1,7 @@
 new Command({
     title: "Maintenance",
     desc: "Toggles bot maintenance.",
+    category: "Developer",
     can: botInfo.developers,
     call: ['maintenance'],
     onCall: function(parsedArgs, args, message) {

@@ -1,6 +1,7 @@
 new Command({
     title: "Avatar",
     desc: "Get someone's avatar link.",
+    category: "User Information",
     call: ['avatar'],
     onCall: function(parsedArgs, args, message) {
         let targ = {user: message.author};
