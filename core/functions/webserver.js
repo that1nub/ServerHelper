@@ -18,10 +18,10 @@ http.createServer(function(req, res) {
                 res.write("Success!");
                 syncGuild(posted['guild_id']);
             } else {
-                res.write("Invalid Guild ID: not on guild or guild doesn't exist")
+                res.write("Invalid Guild ID: not on guild or guild doesn't exist");
             }
         } else {
-            res.write("You must use method POST")
+            res.write("You must use method POST");
         }
         res.end();
     });
