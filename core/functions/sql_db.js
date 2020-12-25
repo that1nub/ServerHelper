@@ -15,6 +15,7 @@ try {
 
 global.syncGuild = function(guildID) {
     if (DataBase !== undefined) {
+        // console.log("Syncing Guild " + guildID); 
         try {
             DataBase.query(`SELECT * FROM guildConfig WHERE guildID = ${guildID}`)
             .then(result => {
