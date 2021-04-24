@@ -15,7 +15,7 @@ global.cache = {
 //Variables
 global.bootTime = Date.now();
 
-let root = process.cwd();
+let root = "/home/pi/Desktop/ServerHelper/Bot";
 global.directory   = {} //If modifying this, make sure all values are a string and not anything else
 directory.root     = root,
 directory.commands = root + "/commands",

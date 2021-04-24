@@ -10,8 +10,8 @@ new Command({
             .setAuthor(bot.user.tag, bot.user.displayAvatarURL())
             .addField('Creation Date:', info.created)
             .addField('Finished Date:', info.finished)
-            .addField('Need support? Have question? Official Discord:', info.links.invite)
-            .addField('Want to visit the website?:', info.links.website);
+            .addField('Need support? Have question? Official Discord:', `${botInfo.emotes.link} [Invitation](${info.links.invite})`)
+            .addField('Want to visit the website?:', `${botInfo.emotes.link} [Website link](${info.links.website})`);
 
         let devs = [];
         for (let dev of botInfo.developers) {

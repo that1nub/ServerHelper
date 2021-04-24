@@ -27,12 +27,17 @@ new Command({
 		console.log = normalLog;
 
 		if (success && !error) {
-			let str = String(success);
-			while (str.length >= 1993) {
-				message.channel.msg('```\n' + str.substring(0, 1993) + '```');
-				str = str.substring(1993);
+			if (success.length <= 1990) {
+				message.channel.msg(`\`\`\`\n${success}\`\`\``);
+			} else {
+				message.channel.msg(`*Output was too large, here's a text file instead*`, {files: [{attachment: Buffer.from(success), name: "output.txt"}]});
 			}
-			if (str.length > 0) message.channel.msg('```\n' + str + '```');
+			// let str = String(success);
+			// while (str.length >= 1993) {
+			// 	message.channel.msg('```\n' + str.substring(0, 1993) + '```');
+			// 	str = str.substring(1993);
+			// }
+			// if (str.length > 0) message.channel.msg('```\n' + str + '```');
 		}
 		else if (!success && !error) message.channel.msg(botInfo.emotes.success + '|Code ran without error, but no return value.');
 		else message.channel.msg(botInfo.emotes.caution + '|Code ran with error```\n' + error + '```');

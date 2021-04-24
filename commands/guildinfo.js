@@ -100,6 +100,7 @@ new Command({
             let embed = new Discord.MessageEmbed()
                 .setColor(0x0096ff)
                 .setAuthor(guild.name, guild.iconURL())
+                .setDescription(`Want to manage my behavior on this server? Click [here](https://nubstoys.xyz/serverhelper/dashboard/guild/${guild.id}/). You will need either administrator or access to manage the server.`)
                 .addField(":alarm_clock: Created On:", created)
                 .addField(":crown: Owned By:", creator)
                 .addField(":bust_in_silhouette: Members:", members)

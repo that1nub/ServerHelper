@@ -21,7 +21,7 @@ http.createServer(function(req, res) {
                 res.write("Invalid Guild ID: not on guild or guild doesn't exist");
             }
         } else {
-            res.write("You must use method POST");
+            res.write("mhm, you aren't the correct application, are you. you shouldn't be here.");
         }
         res.end();
     });

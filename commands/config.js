@@ -1333,7 +1333,7 @@ cmd.onCall = function(parsedArgs, args, message) {
 		let embed = new Discord.MessageEmbed()
 			.setColor(0x0096ff)
 			.setTitle("General Configuration")
-			.setDescription('You can do \`config usage {propery}\` to view how to use that property. You can also check the website for the full usage, this is all simplified.\n' + cmd.website)
+			.setDescription('You can do \`config usage {propery}\` to view how to use that property. You can also check the website for the full usage, this is all simplified.\n[Website](' + cmd.website + ')\n[Manage Guild](https://nubstoys.xyz/serverhelper/dashboard/guild/' + message.guild.id + '/)')
 			.addField(`Prefix: \`${plugins.prefix}\``, `Description: ${meta["prefix"].desc}`)
 			.addField(`Mod Roles: ${plugins.modroles.length} roles`, `Description: ${meta["modroles"].desc}`)
 			.addField(`React Groups: ${rg.length} group${rg.length > 1 ? "s": ""}`, `Description: ${meta["reactGroups"].desc}`)

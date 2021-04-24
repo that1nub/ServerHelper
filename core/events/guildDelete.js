@@ -6,6 +6,9 @@ bot.on('guildDelete', guild => {
         DataBase.query(
             `DELETE FROM guildConfig WHERE guildID = '${guild.id}'`
         );
+        DataBase.query(
+            `DROP TABLE \`applications_${guild.id}\``
+        );
     } catch (err) {
         console.log(err.stack);
     }

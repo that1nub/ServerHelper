@@ -15,7 +15,13 @@ bot.on('guildMemberAdd', member => {
                 let a = member.user;
                 let m = member;
 
-                channel.msg(join.message.replace(/\$user_count/g, g.memberCount).replace(/\$user_id/g, a.id).replace(/\$user_name/g, m.displayName).replace(/\$user_tag/g, a.tag).replace(/\$user/g, a));
+                let msg = join.message.replace(/(\$user_?count|\$guild_?count)/g, g.memberCount)
+                                      .replace(/\$user_?id/g,                     a.id)
+                                      .replace(/\$user_?name/g,                   m.displayName)
+                                      .replace(/\$user_?tag/g,                    a.tag)
+                                      .replace(/(\$user|\$user_?mention)/g,       a)
+                                      .replace(/(\$guild|\$guild_?name)/g,        g.name);
+                channel.msg(msg);
             }
         }
 

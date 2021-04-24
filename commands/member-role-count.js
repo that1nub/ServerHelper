@@ -2,6 +2,7 @@ new Command({
     title: "Member Role Count",
     desc: "Counts the number of people that have a specific role.",
     category: "Server Information",
+    usage: "<@role>",
     call: ['members', 'mrc'],
     onCall: function(parsedArgs, args, message) {
         if (!message.guild) {

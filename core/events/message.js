@@ -33,14 +33,21 @@ bot.on('message', message => {
 			prefix = storage.guilds.get(guild.id).plugins.prefix;
 		}
 	}
-
+	
 	let msg = message.content.trim();
-	if (bot.user) {
-		if (msg.startsWith('<@' + bot.user.id + '>'))
-			prefix = '<@' + bot.user.id + '>';
-		if (msg.startsWith('<@!' + bot.user.id + '>'))
-			prefix = '<@!' + bot.user.id + '>';
+	if (msg === `<@${bot.user.id}>` || msg === `<@!${bot.user.id}>`) {
+		if (message.guild) {
+			message.channel.msg(`${botInfo.emotes.info}|The prefix for this guild is: __**${prefix}**__`);
+		} else {
+			message.channel.msg(`${botInfo.emotes.info}|You're not on a guild, so you don't need to start with a prefix. Just type your command!`);
+		}
+		return;
 	}
+	
+	if (msg.startsWith('<@' + bot.user.id + '>'))
+		prefix = '<@' + bot.user.id + '>';
+	if (msg.startsWith('<@!' + bot.user.id + '>'))
+		prefix = '<@!' + bot.user.id + '>';
 
 	let [args, split] = parseArgs(msg.slice(prefix.length));
 	let cmd = split.length ? removeFormatting(split.shift()).toLowerCase() : " "; // The space prevents running a command
@@ -70,15 +77,15 @@ bot.on('message', message => {
 										} catch (err) {
 											cLog(author.tag + ' (' + author.id + ') has experienced an error running ', commands[i].title, '\n', err.stack);
 											messageDevelopers(botInfo.emotes.caution + '|**' + author.tag + '** (' + author.id + ') has encountered an error in **' + commands[i].title + '**```\n' + err.stack + '```');
-											channel.msg(botInfo.emotes.caution + '|You have encountered an error! I have told the developers so you don\'t need to do anything.');
+											channel.msg(botInfo.emotes.caution + '|You have encountered an error! I have told the developers so you don\'t need to do anything. You will be contacted if more information is required.');
 										}
 									}
 								}
 							}
 						}
 						if (!ran && message.guild) channel.msg(`${botInfo.emotes.fail}|**${cmd}** is an invalid command.`);
-					} else channel.msg(botInfo.emotes.fail + '|Slow down there! You\'re moving to fast for me!');
-				} else channel.msg(botInfo.emotes.fail + '|You are currently blacklisted from ' + bot.user.username);
+					} else channel.msg(botInfo.emotes.fail + '|Slow down there! You\'re moving to fast!');
+				} else channel.msg(botInfo.emotes.fail + '|You are currently blacklisted from using me.');
 			} else channel.msg(`${botInfo.emotes.fail}|I am preparing for a daily restart, please wait a few minutes.`);
 		} else channel.msg(botInfo.emotes.fail + '|Bot is currently down for maintenance.');
 	}
@@ -115,7 +122,12 @@ bot.on('message', message => {
 
 							let rewards = leveling.rewards[String(lvl.is)];
 							if (isArray(rewards)) {
-								message.member.roles.add(rewards).then().catch(console.log);
+								message.member.roles.add(rewards).then().catch(err => {
+									if (err) {
+										console.log(err);
+										message.channel.msg(`${botInfo.emotes.caution}|You were supposted to be rewarded some roles, but an error occured:\`\`\`\n${err}\`\`\``);
+									}
+								});
 							}
 						}
 
@@ -156,7 +168,7 @@ bot.on('message', message => {
 					responseFuncs[r.onRespond](info, r.args);
 				} catch (err) {
 					messageDevelopers(botInfo.emotes.caution + '|**' + author.tag + '** (' + author.id + ') has encountered an error in the __Response Listener__ ***' + r.onRespond + '***:```\n' + err.stack + '```');
-					channel.msg(botInfo.emotes.caution + '|An error occured when you replied! I let the developers know, you don\'t have to do anything.');
+					channel.msg(botInfo.emotes.caution + '|An error occured when you replied! I let the developers know, you don\'t have to do anything. You will be contacted if more information is required.');
 				}
 			}
 		}

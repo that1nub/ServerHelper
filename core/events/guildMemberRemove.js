@@ -14,7 +14,7 @@ bot.on('guildMemberRemove', member => {
             let a = member.user;
             let m = member;
 
-            channel.msg(leave.message.replace(/\$user_count/g, g.memberCount).replace(/\$user_id/g, a.id).replace(/\$user_name/g, m.displayName).replace(/\$user_tag/g, a.tag).replace(/\$user/g, a));
+            channel.msg(leave.message.replace(/\$user_count/g, g.memberCount).replace(/\$guild_count/g, g.memberCount).replace(/\$user_id/g, a.id).replace(/\$user_name/g, m.displayName).replace(/\$user_tag/g, a.tag).replace(/\$user/g, a).replace(/\$guild/g, g.name));
         }
     }
 
