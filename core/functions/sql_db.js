@@ -1,19 +1,20 @@
-try {
-    let db = botInfo.database;
-    MySQL.createConnection({
-        host: db.host,
-        database: db.database,
-        user: db.user,
-        password: db.password,
-        multipleStatements: true
-    }).then(connection => {
-        global.DataBase = connection;
-    }).catch(console.log);
-} catch (err) {
-    console.log(err);
-}
+// try {
+//     let db = botInfo.database;
+//     MySQL.createConnection({
+//         host: db.host,
+//         database: db.database,
+//         user: db.user,
+//         password: db.password,
+//         multipleStatements: true
+//     }).then(connection => {
+//         global.DataBase = connection;
+//     }).catch(console.log);
+// } catch (err) {
+//     console.log(err);
+// }
 
 global.syncGuild = function(guildID) {
+    /*
     if (DataBase !== undefined) {
         // console.log("Syncing Guild " + guildID); 
         try {
@@ -32,4 +33,5 @@ global.syncGuild = function(guildID) {
             console.log(err.stack);
         }
     }
+    */
 }

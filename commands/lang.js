@@ -76,6 +76,10 @@ new Command({
     desc: "All this does is take your input, and give the opposite letter in the alphabet. A becomes Z, B becomes Y, and so on.",
     call: ['invert'],
     onCall: function(parsedArgs, args, message, rawArgString) {
+        if (!message.guild) {
+            return message.channel.msg(`${botInfo.emotes.fail}|You must be on a guild to use this.`);
+        }
+        
         let arg = rawArgString.trim();
         if (arg === "") {
             message.channel.msg(`${botInfo.emotes.fail}|You must supply some text.`);

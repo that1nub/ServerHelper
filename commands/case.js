@@ -28,7 +28,6 @@ new Command({
             return message.channel.msg(`${botInfo.emotes.fail}|No case exists with this number.`);
         }
 
-        let targ = bot.users.resolve(cas.target);
         let embed = new Discord.MessageEmbed()
             .setTitle(cas.type)
             .setDescription(cas.info)
@@ -36,21 +35,31 @@ new Command({
             .addField("Administered By:", `<@${cas.by}>`)
             .setFooter(`Case #${caseN}`)
             .setTimestamp(cas.on);
-
+        
         switch (cas.type) {
-            case "Strike":
+            case "Strike": case "Ban": case "Kick":
                 embed.setColor(0xff3e3e);
             break;
             
             case "Pardon": 
                 embed.setColor(0x3eff3e);
             break;
+            
+            case "Purge":
+                embed.setColor(0xffff3e);
+            break;
         }
-        
+                
+        let targ = bot.users.resolve(cas.target);
         if (targ) {
             embed.setAuthor(`${targ.tag} (${targ.id})`, targ.displayAvatarURL());
         } else {
-            embed.setAuthor(cas.target);
+            let channel = message.guild.channels.resolve(cas.target);
+            if (channel) {
+                embed.setAuthor(channel.name);
+            } else {
+                embed.setAuthor(cas.target);
+            }
         }
 
         message.channel.msg({embed});

@@ -1,7 +1,7 @@
 function s(o) {
     return JSON.stringify(o);
 }
-
+/*
 bot.on('guildCreate', guild => {
     try {
         let plugins = botInfo.def.guilds.plugins; 
@@ -30,4 +30,4 @@ bot.on('guildCreate', guild => {
     } catch (err) {
         console.log(err.stack);
     }
-});
+});*/

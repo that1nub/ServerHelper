@@ -22,7 +22,7 @@ bot.on('message', message => {
 		}
 
 		if (sync) {
-			if (DataBase) {
+			if (typeof DataBase !== 'undefined') {
 				syncGuild(guild.id);
 			}
 		}
@@ -170,6 +170,59 @@ bot.on('message', message => {
 					messageDevelopers(botInfo.emotes.caution + '|**' + author.tag + '** (' + author.id + ') has encountered an error in the __Response Listener__ ***' + r.onRespond + '***:```\n' + err.stack + '```');
 					channel.msg(botInfo.emotes.caution + '|An error occured when you replied! I let the developers know, you don\'t have to do anything. You will be contacted if more information is required.');
 				}
+			}
+		}
+	}
+
+	// Auto Moderation
+	if (guild) {
+		let am = sto.guild.plugins.auto_moderation;
+		if (am.enabled) {
+			let enforce = true;
+			if (am.exclude_mods) {
+				if (message.member.verifyMod() || message.member.permissions.has('ADMINISTRATOR'))
+					enforce = false;
+			}
+
+			if (enforce) {
+				let msg = message.content.toLowerCase().replace(/ +/g, '');
+				let offenses = sto.guild.offenses;
+
+				// swear filter
+				let swear = am.swearing;
+				if (swear.enabled) {
+					let offender = false;
+					for (let i = 0; i < swear.blacklist.length; i++) {
+						let word = swear.blacklist[i];
+						if (msg.includes(word)) {
+							offender = true;
+							break;
+						}
+					}
+
+					if (offender) {
+						if (!isObject(offenses[message.author.id])) offenses[message.author.id] = {};
+
+						let off = offenses[message.author.id];
+						if (!isNumber(off.swearing)) off.swearing = 0;
+
+						off.swearing++;
+						let offNum = String(off.swearing);
+
+						if (Object.keys(swear.response).includes(offNum)) {
+							message.member.enforcePunishment(swear.response[offNum], message);
+							message.channel.msg(`${botInfo.emotes.fail}|${message.author}, you have triggered my swear filter! You have been administered the following punishments:\n• ${parsePunishment(swear.response[offNum]).join('\n• ')}`);
+						} else {
+							message.channel.msg(`${botInfo.emotes.fail}|${message.author}, you have triggered my swear filter! Be careful next time.`);
+						}
+					}
+				}
+				
+				// link filter
+				
+
+				// mass mention filter
+				
 			}
 		}
 	}

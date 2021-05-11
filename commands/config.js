@@ -67,9 +67,8 @@ let meta = {
 		usage: [
 			"(automod|am) (enable|disable)",
 			"(automod|am) (excludemods|em) (enable|disable)",
-			"(automod|am) (autopardon|ap) (enable|disable)",
-			"(automod|am) (autopardon|ap) after <time>",
-			"(automod|am) (autopardon|ap) amount <amount>",
+			"(automod|am) (autopardon|pardon|ap) (enable|disable)",
+			"(automod|am) (autopardon|pardon|ap) after <time>",
 			"(automod|am) (swearfilter|sf) (enable|disable)",
 			"(automod|am) (swearfilter|sf) blacklist (add|remove) {word(s)}",
 			"(automod|am) (swearfilter|sf) response <offense #> {punishment(s)}",
@@ -834,32 +833,492 @@ cmd.onCall = function(parsedArgs, args, message) {
 				}
 			} break;
 
-			// "auto_moderation": {
-			// 	desc: "Manage automatic moderation from the bot.",
-			// 	usage: [
-			// 		"(automod|am) (enable|disable)",
-			// 		"(automod|am) (excludemods|em) (enable|disable)",
-			// 		"(automod|am) (autopardon|ap) (enable|disable)",
-			// 		"(automod|am) (autopardon|ap) after <time>",
-			// 		"(automod|am) (autopardon|ap) amount <amount>",
-			// 		"(automod|am) (swearfilter|sf) (enable|disable)",
-			// 		"(automod|am) (swearfilter|sf) blacklist (add|remove) {word(s)}",
-			// 		"(automod|am) (swearfilter|sf) response <offense #> {punishment(s)}",
-			// 		"(automod|am) (swearfilter|sf) response remove <offense #>",
-			// 		"(automod|am) (linkfilter|lf) (enable|disable)",
-			// 		"(automod|am) (linkfilter|lf) (blacklistiswhitelist|biw) (enable|disable)",
-			// 		"(automod|am) (linkfilter|lf) blacklist (add|remove) {domain(s)}",
-			// 		"(automod|am) (linkfilter|lf) response <offense #> {punishment(s)}",
-			// 		"(automod|am) (linkfilter|lf) response remove <offense #>",
-			// 		"(automod|am) (massmentions|mm) (enable|disable)",
-			// 		"(automod|am) (massmentions|mm) limit (user|role) <limit>",
-			// 		"(automod|am) (massmentions|mm) response <offense #> {punishment(s)}",
-			// 		"(automod|am) (massmentions|mm) response remove <offense #>"
-			// 	]
-			// },
-
 			case "automod": case "am": {
+				if (args[0]) {
+					let am = plugins.auto_moderation;
+					switch (args.shift().toLowerCase()) {
+						case "enable": {
+							am.enabled = true;
+							message.channel.msg(`${botInfo.emotes.success}|Automoderation enabled.`);
+						} break;
 
+						case "disable": {
+							am.enabled = false;
+							message.channel.msg(`${botInfo.emotes.success}|Automoderation disabled.`);
+						} break;
+
+						case "excludemods": case "em" : {
+							if (args[0]) {
+								switch (args[0].toLowerCase()) {
+									case "enable": {
+										am.exclude_mods = true;
+										message.channel.msg(`${botInfo.emotes.success}|Moderators are excluded from automoderation.`);
+									} break;
+			
+									case "disable": {
+										am.exclude_mods = false;
+										message.channel.msg(`${botInfo.emotes.success}|Moderators have automoderation rules enforced against them.`);
+									} break;
+
+									default: {
+										message.channel.msg(`${botInfo.emotes.fail}|You must \`enable\` or \`disable\` the exclusion of moderators.`);
+									} break;
+								}
+							} else {
+								message.channel.msg(`${botInfo.emotes.info}|Mods **${am.exclude_mods ? 'are' : 'are not'}** excluded from automoderation.`);
+							}
+						} break;
+
+						case "autopardon": case "pardon": case "ap": {
+							if (args[0]) {
+								switch (args.shift().toLowerCase()) {
+									case "enable": {
+										am.pardon.enabled = true;
+										message.channel.msg(`${botInfo.emotes.success}|Auto pardoning enabled.`);
+									} break;
+			
+									case "disable": {
+										am.pardon.enabled = false;
+										message.channel.msg(`${botInfo.emotes.success}|Auto pardoning disabled.`);
+									} break;
+
+									case "after": {
+										if (args[0]) {
+											let duration = parseTime(args[0]);
+											if (duration > 0 && Number.isFinite(duration)) {
+												am.pardon.time = duration;
+												message.channel.msg(`${botInfo.emotes.success}|Strikes will automatically be pardoned after **${formatTime(duration)}**.`);
+											} else {
+												message.channel.msg(`${botInfo.emotes.fail}|Your time must be finite.`);
+											}
+										} else {
+											message.channel.msg(`${botInfo.emotes.fail}|You must specify the time.`);
+										}
+									} break;
+
+									default: {
+										message.channel.msg(`${botInfo.emotes.fail}|You must \`enable\` or \`disable\` auto-pardon, or specify the duration with \`after\`.`);
+									} break;
+								}
+							} else { // Display autopardon stuff
+								let embed = new Discord.MessageEmbed()
+									.setColor(0x0096ff)
+									.setTitle("Auto Moderation: Auto Pardoning")
+									.setDescription(`${am.pardon.enabled ? `${botInfo.emotes.success}|Plugin enabled.` : `${botInfo.emotes.fail}|Plugin disabled.`}\nPardons will automatically be dismissed after **${formatTime(am.pardon.time)}**.`);
+								message.channel.msg({embed});
+							}
+						} break;
+
+						case "swearfilter": case "sf": {
+							if (args[0]) {
+								switch (args.shift().toLowerCase()) {
+									case "enable": {
+										am.swearing.enabled = true;
+										message.channel.msg(`${botInfo.emotes.success}|Swear filter enabled.`);
+									} break;
+			
+									case "disable": {
+										am.swearing.enabled = false;
+										message.channel.msg(`${botInfo.emotes.success}|Swear filter disabled.`);
+									} break;
+
+									case "blacklist": {
+										if (args[0]) {
+											switch (args.shift().toLowerCase()) {
+												case "add": {
+													if (args.length > 0) {
+														let bl = am.swearing.blacklist;
+														let added = [];
+														for (let i = 0; i < args.length; i++) {
+															let word = args[i].toLowerCase();
+															if (!bl.includes(word)) {
+																bl.push(word);
+																added.push(args[0]);
+															}
+														}
+
+														if (added.length > 0) {
+															message.channel.msg(`${botInfo.emotes.success}|Successfully added the following words: \`${added.join('`, `')}\``);
+														} else {
+															message.channel.msg(`${botInfo.emotes.fail}|The words you tried to add are already on the blacklist.`);
+														}
+													} else {
+														message.channel.msg(`${botInfo.emotes.fail}|You must specify words to blacklist. Phrases must be wrapped in \`"\`quotes\`"\`.`);
+													}
+												} break;
+
+												case "remove": {
+													if (args.length > 0) {
+														let bl = am.swearing.blacklist;
+														let removed = [];
+														for (let i = 0; i < args.length; i++) {
+															for (let x = 0; x < bl.length; x++) {
+																if (bl[x] === args[i].toLowerCase()) {
+																	removed.push(args[i]);
+																	bl.splice(x, 1);
+																}
+															}
+														}
+
+														if (removed.length > 0) {
+															message.channel.msg(`${botInfo.emotes.success}|Successfully removed the following words: ${removed.join(', ')}`);
+														} else {
+															message.channel.msg(`${botInfo.emotes.fail}|The words you tried to remove aren't on the blacklist.`);
+														}
+													} else {
+														message.channel.msg(`${botInfo.emotes.fail}|You must specify words to whitelist. Phrases must be wrapped in \`"\`quotes\`"\`.`);
+													}
+												} break;
+
+												default: {
+													message.channel.msg(`${botInfo.emotes.fail}|You must \`add\` to or \`remove\` from the blacklisted words.`);
+												} break;
+											}
+										} else { // Send a list of the forbidden words :)
+											message.channel.msg(`${botInfo.emotes.info}|Blacklisted words/phrases: ${am.swearing.blacklist.join(', ')}`);
+										}
+									} break;
+
+									case "response": {
+										if (args[0]) {
+											let response = am.swearing.response;
+											switch(args[0].toLowerCase()) {
+												case "remove": {
+													args.shift();
+													if (args[0]) {
+														if (Object.keys(response).includes(args[0])) {
+															delete response[args[0]];
+															message.channel.msg(`${botInfo.emotes.success}|Removed punishment for **${args[0]}** active strikes`);
+														}
+													} else {
+														message.channel.msg(`${botInfo.emotes.fail}|You must specify a number to remove.`);
+													}
+												} break;
+
+												default: {
+													let offense = args.shift();
+													
+													if (!Number.isNaN(Number(offense))) {
+														if (args.length > 0) {
+															let punishment = args.join(' ').toLowerCase();
+															response[offense] = punishment;
+															message.channel.msg(`${botInfo.emotes.success}|At **${offense}** active strikes, a punishment will be given: \`${punishment}\``);
+														} else {
+															if (response[offense]) {
+																message.channel.msg(`${botInfo.emotes.info}|At **${offense}** active strikes, a punishment will be given: \`${response[offense]}\``);
+															} else {
+																message.channel.msg(`${botInfo.emotes.fail}|You must specify the punishment.`);
+															}
+														}
+													} else {
+														message.channel.msg(`${botInfo.emotes.fail}|Your must specify the offense number`);
+													}
+												} break;
+											}
+										} else {
+											let str = [];
+											let response = am.swearing.response;
+											let keys = Object.keys(response);
+											for (let i = 0; i < keys.length; i++) {
+												str.push(`${keys[i]}: ${response[keys[i]]}`);
+											}
+
+											message.channel.msg(`${botInfo.emotes.info}|Punishments are given at the following offenses:\`\`\`\n${str.join('\n')}\`\`\``);
+										}
+									} break;
+
+									default: {
+										message.channel.msg(`${botInfo.emotes.fail}|Invalid swear filter operation.`);
+									} break;
+								}
+							} else { // Display swearfilter settings
+								let embed = new Discord.MessageEmbed()
+									.setColor(0x0096ff)
+									.setTitle("Auto Moderation: Swear Filter")
+									.setDescription((am.swearing.enabled ? `${botInfo.emotes.success}|Plugin enabled.` : `${botInfo.emotes.fail}|Plugin disabled.`) + `\n• **${am.swearing.blacklist.length}** blacklisted words/phrases.\n• **${Object.keys(am.swearing.response).length}** punishments.`);
+								message.channel.msg({embed});
+							}
+						} break;
+
+						case "linkfilter": case "lf": {
+							if (args[0]) {
+								switch (args.shift().toLowerCase()) {
+									case "enable": {
+										am.links.enabled = true;
+										message.channel.msg(`${botInfo.emotes.success}|Link filter enabled.`);
+									} break;
+			
+									case "disable": {
+										am.links.enabled = false;
+										message.channel.msg(`${botInfo.emotes.success}|Link filter disabled.`);
+									} break;
+
+									case "whitelistisblacklist": case "wib": {
+										if (args[0]) {
+											switch(args[0].toLowerCase()) {
+												case "enable": {
+													am.links.blacklistIsWhitelist = true;
+													message.channel.msg(`${botInfo.emotes.success}|Blacklist is now a whitelist.`);
+												} break;
+
+												case "disable": {
+													am.links.blacklistIsWhitelist = true;
+													message.channel.msg(`${botInfo.emotes.success}|Whitelist is now a blacklist.`);
+												} break;
+
+												default: {
+													message.channel.msg(`${botInfo.emotes.fail}|You must \`enable\` or \`disable\` this feature.`);
+												} break;
+											}
+										} else {
+											message.channel.msg(`${botInfo.emotes.info}|Blacklist is ${am.links.blacklistIsWhitelist ? "" : "**not** "}a whitelist.`);
+										}
+									} break;
+
+									case "blacklist": {
+										if (args[0]) {
+											switch (args.shift().toLowerCase()) {
+												case "add": {
+													if (args.length > 0) {
+														let bl = am.links.blacklist;
+														let added = [];
+														for (let i = 0; i < args.length; i++) {
+															let word = args[i].toLowerCase();
+															if (!bl.includes(word)) {
+																bl.push(word);
+																added.push(args[0]);
+															}
+														}
+
+														if (added.length > 0) {
+															message.channel.msg(`${botInfo.emotes.success}|Successfully added the following links: \`${added.join('`, `')}\``);
+														} else {
+															message.channel.msg(`${botInfo.emotes.fail}|The links you tried to add are already on the blacklist.`);
+														}
+													} else {
+														message.channel.msg(`${botInfo.emotes.fail}|You must specify links to blacklist.`);
+													}
+												} break;
+
+												case "remove": {
+													if (args.length > 0) {
+														let bl = am.links.blacklist;
+														let removed = [];
+														for (let i = 0; i < args.length; i++) {
+															for (let x = 0; x < bl.length; x++) {
+																if (bl[x] === args[i].toLowerCase()) {
+																	removed.push(args[i]);
+																	bl.splice(x, 1);
+																}
+															}
+														}
+
+														if (removed.length > 0) {
+															message.channel.msg(`${botInfo.emotes.success}|Successfully removed the following links: ${removed.join(', ')}`);
+														} else {
+															message.channel.msg(`${botInfo.emotes.fail}|The links you tried to remove aren't on the blacklist.`);
+														}
+													} else {
+														message.channel.msg(`${botInfo.emotes.fail}|You must specify links to whitelist.`);
+													}
+												} break;
+
+												default: {
+													message.channel.msg(`${botInfo.emotes.fail}|You must \`add\` to or \`remove\` from the blacklisted links.`);
+												} break;
+											}
+										} else {
+											message.channel.msg(`${botInfo.emotes.info}|Blacklisted/Whitelisted links: ${am.links.blacklist.join(', ')}`);
+										}
+									} break;
+
+									case "response": {
+										if (args[0]) {
+											let response = am.links.response;
+											switch(args[0].toLowerCase()) {
+												case "remove": {
+													args.shift();
+													if (args[0]) {
+														if (Object.keys(response).includes(args[0])) {
+															delete response[args[0]];
+															message.channel.msg(`${botInfo.emotes.success}|Removed punishment for **${args[0]}** active strikes`);
+														}
+													} else {
+														message.channel.msg(`${botInfo.emotes.fail}|You must specify a number to remove.`);
+													}
+												} break;
+
+												default: {
+													let offense = args.shift();
+													if (!Number.isNaN(Number(offense))) {
+														if (args.length > 0) {
+															let punishment = args.join(' ').toLowerCase();
+															response[offense] = punishment;
+															message.channel.msg(`${botInfo.emotes.success}|At **${offense}** active strikes, a punishment will be given: \`${punishment}\``);
+														} else {
+															if (response[offense]) {
+																message.channel.msg(`${botInfo.emotes.info}|At **${offense}** active strikes, a punishment will be given: \`${response[offense]}\``);
+															} else {
+																message.channel.msg(`${botInfo.emotes.fail}|You must specify the punishment.`);
+															}
+														}
+													} else {
+														message.channel.msg(`${botInfo.emotes.fail}|Your must specify the offense number`);
+													}
+												} break;
+											}
+										} else {
+											let str = [];
+											let response = am.links.response;
+											let keys = Object.keys(response);
+											for (let i = 0; i < keys.length; i++) {
+												str.push(`${keys[i]}: ${response[keys[i]]}`);
+											}
+
+											message.channel.msg(`${botInfo.emotes.info}|Punishments are given at the following offenses:\`\`\`\n${str.join('\n')}\`\`\``);
+										}
+									} break;
+
+									default: {
+										message.channel.msg(`${botInfo.emotes.fail}|Invalid link filter operation.`);
+									} break;
+								}
+							} else { // Display linkfilter settings
+								let embed = new Discord.MessageEmbed()
+									.setColor(0x0096ff)
+									.setTitle("Auto Moderation: Link Filter")
+									.setDescription((am.links.enabled ? `${botInfo.emotes.success}|Plugin enabled.` : `${botInfo.emotes.fail}|Plugin disabled.`) + `\n• **${am.links.blacklist.length}** ${am.links.blacklistIsWhitelist ? "whitelisted" : "blacklisted"} links.\n• **${Object.keys(am.links.response).length}** punishments.`);
+								message.channel.msg({embed});
+							}
+						} break;
+
+						case "massmentions": case "massmention": case "mm": {
+							if (args[0]) {
+								switch (args.shift().toLowerCase()) {
+									case "enable": {
+										am.mass_mention.enabled = true;
+										message.channel.msg(`${botInfo.emotes.success}|Mass mention moderation enabled.`);
+									} break;
+
+									case "disable": {
+										am.mass_mention.enabled = false;
+										message.channel.msg(`${botInfo.emotes.success}|Mass mention moderation disabled.`);
+									} break;
+
+									case "limit": {
+										if (args[0]) {
+											switch (args.shift().toLowerCase()) {
+												case "users": case "user": {
+													let num = Number(args[0]);
+													if (!Number.isNaN(num)) {
+														am.mass_mention.limit.user = num;
+														message.channel.msg(`${botInfo.emotes.success}|Maximum number of user mentions is **${num}**`);
+													} else {
+														message.channel.msg(`${botInfo.emotes.fail}|You must input a number`);
+													}
+												} break;
+
+												case "roles": case "role": {
+													let num = Number(args[0]);
+													if (!Number.isNaN(num)) {
+														am.mass_mention.limit.role = num;
+														message.channel.msg(`${botInfo.emotes.success}|Maximum number of role mentions is **${num}**`);
+													} else {
+														message.channel.msg(`${botInfo.emotes.fail}|You must input a number`);
+													}
+												} break;
+
+												default: {
+													message.channel.msg(`${botInfo.emotes.fail}|You must specify if the limit is for users or roles.`);
+												} break;
+											}
+										} else { // Display both user and role max mentions
+											let embed = new Discord.MessageEmbed()
+												.setColor(0x0096ff)
+												.setTitle("Auto Moderation: Mass Mention Limits")
+												.setDescription(`• 👤 Users: **${am.mass_mention.limit.user}**\n• 👥 Roles: **${am.mass_mention.limit.role}**`);
+
+											message.channel.msg({embed});
+										}
+									} break;
+									
+									case "response": {
+										if (args[0]) {
+											let response = am.mass_mention.response;
+											switch(args[0].toLowerCase()) {
+												case "remove": {
+													args.shift();
+													if (args[0]) {
+														if (Object.keys(response).includes(args[0])) {
+															delete response[args[0]];
+															message.channel.msg(`${botInfo.emotes.success}|Removed punishment for **${args[0]}** active strikes`);
+														}
+													} else {
+														message.channel.msg(`${botInfo.emotes.fail}|You must specify a number to remove.`);
+													}
+												} break;
+
+												default: {
+													let offense = args.shift();
+													if (!Number.isNaN(Number(offense))) {
+														if (args.length > 0) {
+															let punishment = args.join(' ').toLowerCase();
+															response[offense] = punishment;
+															message.channel.msg(`${botInfo.emotes.success}|At **${offense}** active strikes, a punishment will be given: \`${punishment}\``);
+														} else {
+															if (response[offense]) {
+																message.channel.msg(`${botInfo.emotes.info}|At **${offense}** active strikes, a punishment will be given: \`${response[offense]}\``);
+															} else {
+																message.channel.msg(`${botInfo.emotes.fail}|You must specify the punishment.`);
+															}
+														}
+													} else {
+														message.channel.msg(`${botInfo.emotes.fail}|Your must specify the offense number`);
+													}
+												} break;
+											}
+										} else {
+											let str = [];
+											let response = am.mass_mention.response;
+											let keys = Object.keys(response);
+											for (let i = 0; i < keys.length; i++) {
+												str.push(`${keys[i]}: ${response[keys[i]]}`);
+											}
+
+											message.channel.msg(`${botInfo.emotes.info}|Punishments are given at the following offenses:\`\`\`\n${str.join('\n')}\`\`\``);
+										}
+									} break;
+
+									default: {
+										message.channel.msg(`${botInfo.emotes.fail}|Invalid option mass mentions.`);
+									} break;
+								}
+							} else { // Display mass mentions.
+								let embed = new Discord.MessageEmbed()
+									.setColor(0x0096ff)
+									.setTitle("Auto Moderation: Mass Mention Filter")
+									.setDescription((am.mass_mention.enabled ? `${botInfo.emotes.success}|Plugin enabled.` : `${botInfo.emotes.fail}|Plugin disabled.`) + `\n• Maximum mentions: **${am.mass_mention.limit.user}** users, **${am.mass_mention.limit.role}** role.\n• **${Object.keys(am.links.response).length}** punishments.`);
+								message.channel.msg({embed});
+							}
+						} break;
+
+						default: {
+							message.channel.msg(`${botInfo.emotes.fail}|Invalid automod setting.`);
+						} break;
+					}
+				} else { // Display automod settings
+					let am = plugins.auto_moderation;
+					let embed = new Discord.MessageEmbed()
+						.setColor(0x0096ff)
+						.setTitle("Auto Moderation")
+						.setDescription(am.enabled ? `${botInfo.emotes.success}|Plugin enabled.` : `${botInfo.emotes.fail}|Plugin disabled.`)
+						.addField(`Exclude Moderators: ${am.exclude_mods ? `${botInfo.emotes.success}|Yes` : `${botInfo.emotes.fail}|No`}`, "Should moderator's be excluded from auto moderation rules?")
+						.addField(`Auto Pardon: ${am.pardon.enabled ? `${botInfo.emotes.success}|Yes` : `${botInfo.emotes.fail}|No`}`, "Should strikes be automatically pardoned over time?")
+						.addField(`Swear Filter: ${am.swearing.enabled ? `${botInfo.emotes.success}|Enabled` : `${botInfo.emotes.fail}|Disabled`}`, "Manage swear filter behavior.")
+						.addField(`Link Filter: ${am.links.enabled ? `${botInfo.emotes.success}|Enabled` : `${botInfo.emotes.fail}|Disabled`}`, "Manage link filter behavior.")
+						.addField(`Mass Mention Filter: ${am.links.enabled ? `${botInfo.emotes.success}|Enabled` : `${botInfo.emotes.fail}|Disabled`}`, "Manage mass mention filter behavior.");
+					message.channel.msg({embed});
+				}
 			} break;
 
 			case "leveling": {
@@ -1341,6 +1800,7 @@ cmd.onCall = function(parsedArgs, args, message) {
 			.addField(`Joining: ${plugins.join.enabled ? `${botInfo.emotes.success}|Enabled.` : `${botInfo.emotes.fail}|Disabled.`}`, `Description: ${meta["join"].desc}`)
 			.addField(`Leaving: ${plugins.leave.enabled ? `${botInfo.emotes.success}|Enabled.` : `${botInfo.emotes.fail}|Disabled.`}`, `Description: ${meta["leave"].desc}`)
 			.addField(`Self Assignable Roles: ${plugins.self_assign.enabled ? `${botInfo.emotes.success}|Enabled.` : `${botInfo.emotes.fail}|Disabled.`}`, `Description: ${meta["self_assign"].desc}`)
+			.addField(`Auto Moderation: ${plugins.auto_moderation.enabled ? `${botInfo.emotes.success}|Enabled.` : `${botInfo.emotes.fail}|Disabled.`}`, `Description: ${meta["auto_moderation"].desc}`)
 			.addField(`Leveling: ${plugins.leveling.enabled ? `${botInfo.emotes.success}|Enabled.` : `${botInfo.emotes.fail}|Disabled.`}`, `Description: ${meta["leveling"].desc}`)
 			.addField(`Logging: ${plugins.logging.enabled ? `${botInfo.emotes.success}|Enabled.` : `${botInfo.emotes.fail}|Disabled.`}`, `Description: ${meta["logging"].desc}`);
 

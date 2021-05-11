@@ -14,6 +14,43 @@ Discord.GuildMember.prototype.verifyMod = function() {
 	return config.plugins.modroles.includes(this.id);
 }
 
+Discord.GuildMember.prototype.enforcePunishment = function(input, message) {
+	if (!isString(input)) throw new Error("GuildMember.enforcePunishment: Bad argument #1: Expected a string, got " + typeof input);
+
+	let punishments = input.toLowerCase().split(/;+/g);
+	for (let i = 0; i < punishments.length; i++) {
+		let pun = punishments[i].trim();
+		let args = pun.split(/ +/g);
+
+		switch (args.shift()) {
+			case "delete": {
+				message.delete();
+			} break;
+
+			case "mute": {
+				let time = parseTime(args[0] || "forever");
+				if (isNumber(time) && Number.isFinite(time)) {
+					// mute for time
+				} else {
+					// mute forever
+				}
+			} break;
+
+			case "kick": {
+				if (this.kickable) {
+					this.kick("Failure to follow rules.");
+				}
+			} break;
+
+			case "ban": {
+				if (this.bannable) {
+					this.ban({reason: "Failure to follow rules."});
+				}
+			}
+		}
+	}
+}
+
 /*------------------------------------------------------------------------------
 	findUser(string needle, Guild guild)
 		* string needle

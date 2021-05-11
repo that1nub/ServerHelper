@@ -1,11 +1,13 @@
 global.copyObject = function(obj, temp) {
-	if (!(typeof obj == "object" && typeof temp == "object"))
+	if (!(isObject(obj) && isObject(temp)))
 		throw new Error('copyObject: Two objects expected, got ' + typeof obj + ' and ' + typeof temp);
 	let tempKeys = Object.keys(temp);
 	for (let i = 0; i < tempKeys.length; i++) {
-		if (typeof temp[tempKeys[i]] == "object") {
-			if (typeof obj[tempKeys[i]] != "object")
+		if (isObject(temp[tempKeys[i]])) {
+			if (!isObject(obj[tempKeys[i]]) && !isArray(temp[tempKeys[i]]))
 				obj[tempKeys[i]] = {};
+			else if (!isArray(obj[tempKeys[i]]) && isArray(temp[tempKeys[i]]))
+				obj[tempKeys[i]] = [];
 			Object.setPrototypeOf(obj[tempKeys[i]], temp[tempKeys[i]].__proto__);
 			copyObject(obj[tempKeys[i]], temp[tempKeys[i]]);
 		} else

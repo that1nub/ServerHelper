@@ -1,14 +1,14 @@
 {
-    "token": "",
+    "token": "( ͡° ͜ʖ ͡°)",
     "database": {
-        "host": "",
-        "database": "",
-        "user": "",
-        "password": ""
+        "host": "( ͡° ͜ʖ ͡°)",
+        "database": "( ͡° ͜ʖ ͡°)",
+        "user": "( ͡° ͜ʖ ͡°)",
+        "password": "( ͡° ͜ʖ ͡°)"
     },
     "maintenance": false,
     "information": {
-        "created": "Saturday, April 22, 2020 @ 4:52 PM Central Time (GTM-5)",
+        "created": "Saturday, April 22, 2020 @ 4:52 PM Central Time (GMT-5)",
         "finished": "WIP",
         "links": {
             "invite": "https://discord.gg/VbgFtCU",
@@ -32,7 +32,8 @@
         "online": "<:online:501183987159662593>",
         "away": "<:away:501184009913630761>",
         "dnd": "<:dnd:501184020575551488>",
-        "offline": "<:offline:501184046131445801>"
+        "offline": "<:offline:501184046131445801>",
+        "link": "<:link:776234610317066261>"
     },
     "ready": {
         "guild": "667514990131150904",
@@ -108,6 +109,7 @@
             "shouts": {},
             "levels": {},
             "cases": [],
+            "offenses": {},
             "plugins": {
                 "prefix": "~",
                 "modroles": [],
@@ -135,35 +137,40 @@
                 "auto_moderation": {
                     "enabled": false,
                     "pardon": {
-                        "time": 604800000,
-                        "amount": 1
+                        "enabled": true,
+                        "time": 604800000
                     },
                     "exclude_mods": true,
+                    "ignored_channels": [],
+                    "ignored_roles": [],
                     "swearing": {
-                        "blacklist": ["ass","bitch","cunt","fag","faggot","fuck","fuk","shit","nigg","nigga","nigger","queer"],
+                        "enabled": false,
+                        "blacklist": ["bitch","cunt","fag","faggot","fuck","fuk","shit","nigg","nigga","nigger","queer"],
                         "response": {
-                            "1": "warn;delete",
+                            "1": "delete",
                             "2": "mute 1h;delete",
                             "3": "mute 6h;delete",
-                            "4": "mute forever;delete;strike 1"
+                            "4": "mute forever;delete;strike"
                         }
                     },
                     "links": {
+                        "enabled": false,
                         "blacklistIsWhitelist": false,
-                        "blacklist": ["discord.gg","privatepage.vip","nakedphotos.club","viewc.site"],
+                        "blacklist": ["discord.gg", "discord.com/invite","privatepage.vip","nakedphotos.club","viewc.site"],
                         "response": {
-                            "1": "mute forever;delete;strike 1"
+                            "1": "mute forever;delete;strike"
                         }
                     },
                     "mass_mention": {
+                        "enabled": false,
                         "limit": {
                             "user": 5,
                             "role": 2
                         },
                         "response": {
-                            "1": "mute 1d;strike 1",
-                            "2": "mute 1w;strike 2",
-                            "3": "mute forever;strike 2"
+                            "1": "mute 1d;strike",
+                            "2": "mute 1w;strike",
+                            "3": "mute forever;strike"
                         }
                     }
                 },

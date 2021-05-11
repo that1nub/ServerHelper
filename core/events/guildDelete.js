@@ -1,4 +1,4 @@
-bot.on('guildDelete', guild => {
+/*bot.on('guildDelete', guild => {
     try {
         DataBase.query(
             `DELETE FROM guilds WHERE guildID = '${guild.id}'`
@@ -12,4 +12,4 @@ bot.on('guildDelete', guild => {
     } catch (err) {
         console.log(err.stack);
     }
-});
+});*/

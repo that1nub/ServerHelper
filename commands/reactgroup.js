@@ -46,9 +46,8 @@ new Command({
                     .setTitle("React for Role: " + found)
                     .setDescription(`Setup progress: 0/${r.length}\n\nAdd a reaction for <@&${r[0]}>`);
 
-                message.channel.msg(`${botInfo.emotes.info}|Setting up reaction roles for **${found}**.\n__**If you need to change an emoji, type "cancel" and try again**__.`, {embed}).then(newMsg => {
+                message.channel.msg(`${botInfo.emotes.info}|Setting up reaction roles for **${found}**.`, {embed}).then(newMsg => {
                     newMsg.setReactListener(time.m * 5, 'reactGroupCreate', {group: found, emotes: [], roles: r}, [message.author.id]);
-                    message.channel.setResponseListener([newMsg.id], [message.author.id], time.m * 5, 'reactGroupCancel');
                 });
             } else message.channel.msg(`${botInfo.emotes.fail}|After verifying that status of roles, no more roles are in **${found}**.`);
         } else if (found.length > 1) message.channel.msg(`${botInfo.emotes.fail}|Too many groups found for **${args.join(' ')}**.`);

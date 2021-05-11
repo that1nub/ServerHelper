@@ -77,45 +77,35 @@ global.parsePunishment = function(input) {
 
     let out = [];
 
-    let punishments = input.split(/;+/g);
+    let punishments = input.toLowerCase().split(/;+/g);
     for (let i = 0; i < punishments.length; i++) {
-        punishments[i] = punishments[i].trim();
+        let pun = punishments[i].trim();
+        let args = pun.split(/ +/g);
 
-        let args = punishments[i].split(/ +/g);
-
-        switch (args.shift().toLowerCase()) {
+        switch (args.shift()) {
             case "mute": {
-                if (!isString(args[0])) args[0] = "forever"
-
-                let time = parseTime(args[0]);
+                let time = parseTime(args[0] || "forever");
                 if (isNumber(time) && Number.isFinite(time)) {
-                    out.push(`Mute member for ${formatTime(time)}.`);
+                    out.push(`Muted for ${formatTime(time)}.`);
                 } else {
-                    out.push("Mute member indefinitely.");
+                    out.push("Muted indefinitely.");
                 }
             } break;
 
             case "delete": {
-                out.push("Delete member's message that caused infraction.");
+                out.push("Message with offense was deleted.");
             } break;
 
             case "kick": {
-                out.push("Kick member.");
+                out.push("Member kicked.");
             } break;
 
             case "ban": {
-                if (!isString(args[0])) args[0] = "forever"
-
-                let time = parseTime(args[0]);
-                if (isNumber(time) && Number.isFinite(time)) {
-                    out.push(`Temporarily ban member for ${formatTime(time)}.`);
-                } else {
-                    out.push("Permanently ban member.");
-                }
+                out.push("Member banned.")
             } break;
 
             default: {
-                out.push("Invalid input.");
+                out.push(`Invalid input: \`${pun}\``);
             } break;
         }
     }
